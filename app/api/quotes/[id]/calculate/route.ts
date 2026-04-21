@@ -1,7 +1,6 @@
 import { canAccessQuote, requireAuth } from '@/lib/auth';
 import { writeAudit } from '@/lib/audit';
 import { calculateQuote } from '@/lib/calc';
-import { parseJsonString, toJsonString } from '@/lib/json';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -20,7 +19,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const comboRules = await prisma.pricingComboRule.findMany();
     const paramsList = await prisma.systemParameter.findMany();
 
-    const formData = parseJsonString<Record<string, any>>(form.formData, {});
+    const formData = form.formData as Record<string, any>;
     const oldResult = await prisma.quoteResult.findUnique({ where: { quoteId: quote.id } });
 
     const result = calculateQuote({
@@ -34,16 +33,10 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       procurementRate: body.procurementRate
     });
 
-    const dbPayload = {
-      ...result,
-      moduleCosts: toJsonString(result.moduleCosts),
-      calcContext: toJsonString(result.calcContext)
-    };
-
     await prisma.quoteResult.upsert({
       where: { quoteId: quote.id },
-      update: dbPayload,
-      create: { quoteId: quote.id, ...dbPayload }
+      update: result,
+      create: { quoteId: quote.id, ...result }
     });
 
     await prisma.quote.update({ where: { id: quote.id }, data: { status: 'CALCULATED' } });

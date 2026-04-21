@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, UserRole } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -10,12 +10,12 @@ async function main() {
   const admin = await prisma.user.upsert({
     where: { username: 'admin' },
     update: {},
-    create: { username: 'admin', passwordHash: adminPwd, role: 'ADMIN' }
+    create: { username: 'admin', passwordHash: adminPwd, role: UserRole.ADMIN }
   });
   await prisma.user.upsert({
     where: { username: 'sales1' },
     update: {},
-    create: { username: 'sales1', passwordHash: salesPwd, role: 'SALES' }
+    create: { username: 'sales1', passwordHash: salesPwd, role: UserRole.SALES }
   });
 
   const systemParams = [
@@ -28,13 +28,10 @@ async function main() {
   ];
 
   for (const [paramKey, paramName, paramValue] of systemParams) {
-    const key = String(paramKey);
-    const name = String(paramName);
-    const value = Number(paramValue);
     await prisma.systemParameter.upsert({
-      where: { paramKey: key },
-      update: { paramName: name, paramValue: value },
-      create: { paramKey: key, paramName: name, paramValue: value }
+      where: { paramKey },
+      update: { paramName, paramValue },
+      create: { paramKey, paramName, paramValue }
     });
   }
 
@@ -59,13 +56,10 @@ async function main() {
   ];
 
   for (const [ruleKey, ruleName, value] of directRules) {
-    const key = String(ruleKey);
-    const name = String(ruleName);
-    const val = Number(value);
     await prisma.pricingDirectRule.upsert({
-      where: { ruleKey: key },
-      update: { ruleName: name, value: val },
-      create: { ruleKey: key, ruleName: name, value: val }
+      where: { ruleKey },
+      update: { ruleName, value },
+      create: { ruleKey, ruleName, value }
     });
   }
 
@@ -78,12 +72,10 @@ async function main() {
   ];
 
   for (const [ruleKey, ruleName, stepSize, freeSteps, stepPrice] of stepRules) {
-    const key = String(ruleKey);
-    const name = String(ruleName);
     await prisma.pricingStepRule.upsert({
-      where: { ruleKey: key },
-      update: { ruleName: name, stepSize: Number(stepSize), freeSteps: Number(freeSteps), stepPrice: Number(stepPrice) },
-      create: { ruleKey: key, ruleName: name, stepSize: Number(stepSize), freeSteps: Number(freeSteps), stepPrice: Number(stepPrice) }
+      where: { ruleKey },
+      update: { ruleName, stepSize, freeSteps, stepPrice },
+      create: { ruleKey, ruleName, stepSize, freeSteps, stepPrice }
     });
   }
 
@@ -166,7 +158,7 @@ async function main() {
     ['payment_ratio_4', '第四笔回款比例', 'number', null, null, 'value>=0&&value<=1', 'SALES,ADMIN', '回款', 1030],
     ['payment_cycle_t', '回款周期t', 'number', null, null, 'value>=0', 'SALES,ADMIN', '回款', 1040],
     ['warranty_period_b', '质保运维期b', 'number', null, null, 'value>=0', 'SALES,ADMIN', '回款', 1050]
-  ];
+  ] as const;
 
   for (let i = 1; i <= 5; i++) {
     fields.push([
@@ -216,41 +208,30 @@ async function main() {
   }
 
   for (const row of fields) {
-    const fieldKey = String(row[0]);
-    const label = String(row[1]);
-    const fieldType = String(row[2]);
-    const fieldOptions = row[3] ? JSON.stringify(row[3]) : null;
-    const visibleWhen = row[4] ? String(row[4]) : null;
-    const requiredWhen = row[4] ? String(row[4]) : null;
-    const validationRule = row[5] ? String(row[5]) : null;
-    const editableRoles = String(row[6]);
-    const section = String(row[7]);
-    const orderNo = Number(row[8]);
-
     await prisma.formFieldRule.upsert({
-      where: { fieldKey },
+      where: { fieldKey: row[0] },
       update: {
-        label,
-        fieldType,
-        fieldOptions,
-        visibleWhen,
-        requiredWhen,
-        validationRule,
-        editableRoles,
-        section,
-        orderNo
+        label: row[1],
+        fieldType: row[2],
+        fieldOptions: row[3],
+        visibleWhen: row[4],
+        requiredWhen: row[4],
+        validationRule: row[5],
+        editableRoles: row[6],
+        section: row[7],
+        orderNo: row[8]
       },
       create: {
-        fieldKey,
-        label,
-        fieldType,
-        fieldOptions,
-        visibleWhen,
-        requiredWhen,
-        validationRule,
-        editableRoles,
-        section,
-        orderNo
+        fieldKey: row[0],
+        label: row[1],
+        fieldType: row[2],
+        fieldOptions: row[3],
+        visibleWhen: row[4],
+        requiredWhen: row[4],
+        validationRule: row[5],
+        editableRoles: row[6],
+        section: row[7],
+        orderNo: row[8]
       }
     });
   }
@@ -260,7 +241,7 @@ async function main() {
       userId: admin.id,
       action: 'SEED_INIT',
       entityType: 'SYSTEM',
-      detail: JSON.stringify({ message: 'Seed completed' })
+      detail: { message: 'Seed completed' }
     }
   });
 }

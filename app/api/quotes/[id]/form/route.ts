@@ -3,7 +3,6 @@ import { writeAudit } from '@/lib/audit';
 import { prisma } from '@/lib/prisma';
 import { validateDynamicForm } from '@/lib/ruleEngine';
 import { NextRequest, NextResponse } from 'next/server';
-import { parseJsonString, toJsonString } from '@/lib/json';
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -14,17 +13,16 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const body = await req.json();
     const formData = body.formData || {};
 
-    const rulesRaw = await prisma.formFieldRule.findMany({ orderBy: { orderNo: 'asc' } });
-    const rules = rulesRaw.map((r) => ({ ...r, fieldOptions: parseJsonString(r.fieldOptions, null) }));
-    const errors = validateDynamicForm(rules as any, formData);
+    const rules = await prisma.formFieldRule.findMany({ orderBy: { orderNo: 'asc' } });
+    const errors = validateDynamicForm(rules, formData);
     if (Object.keys(errors).length > 0 && body.strictValidation) {
       return NextResponse.json({ message: 'Validation failed', errors }, { status: 400 });
     }
 
     const updated = await prisma.quoteForm.upsert({
       where: { quoteId: quote.id },
-      update: { formData: toJsonString(formData) },
-      create: { quoteId: quote.id, formData: toJsonString(formData) }
+      update: { formData },
+      create: { quoteId: quote.id, formData }
     });
 
     await prisma.quote.update({
@@ -37,7 +35,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     });
 
     await writeAudit(user.id, 'QUOTE_FORM_UPDATED', 'QUOTE', quote.id, { hasErrors: Object.keys(errors).length > 0, errors });
-    return NextResponse.json({ form: { ...updated, formData }, errors });
+    return NextResponse.json({ form: updated, errors });
   } catch {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }

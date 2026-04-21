@@ -7,136 +7,146 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  SALES
+  ADMIN
+}
+
+enum QuoteStatus {
+  DRAFT
+  CALCULATED
+}
+
 model User {
-  id           String   @id @default(cuid())
-  username     String   @unique
+  id           String     @id @default(cuid())
+  username     String     @unique
   passwordHash String
-  role         String
-  createdAt    DateTime @default(now())
+  role         UserRole
+  createdAt    DateTime   @default(now())
   quotes       Quote[]
   logs         AuditLog[]
 }
 
 model Quote {
-  id           String                @id @default(cuid())
-  ownerUserId  String
-  projectName  String
-  customerName String?
-  remarks      String?
-  status       String                @default("DRAFT")
-  createdAt    DateTime              @default(now())
-  updatedAt    DateTime              @updatedAt
-  owner        User                  @relation(fields: [ownerUserId], references: [id])
-  form         QuoteForm?
-  result       QuoteResult?
-  snapshots    QuoteResultSnapshot[]
+  id              String                @id @default(cuid())
+  ownerUserId     String
+  projectName     String
+  customerName    String?
+  remarks         String?
+  status          QuoteStatus           @default(DRAFT)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  owner           User                  @relation(fields: [ownerUserId], references: [id])
+  form            QuoteForm?
+  result          QuoteResult?
+  snapshots       QuoteResultSnapshot[]
 }
 
 model QuoteForm {
   id        String   @id @default(cuid())
   quoteId   String   @unique
-  formData  String
+  formData  Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   quote     Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
 }
 
 model QuoteResult {
-  id                     String   @id @default(cuid())
-  quoteId                String   @unique
-  moduleCosts            String
-  implMgmtCost           Float
-  businessExpense        Float
-  otherAmortization      Float
-  financeCost            Float
-  totalCost              Float
-  profitRate             Float
-  taxRate                Float
-  procurementRate        Float
-  targetPreTaxRevenue    Float
-  finalQuote             Float
-  procurementAmount      Float
-  taxAmount              Float
-  implNaturalDays        Float
-  weightedPaymentArrival Float
-  calcContext            String
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
-  quote                  Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  id                       String   @id @default(cuid())
+  quoteId                  String   @unique
+  moduleCosts              Json
+  implMgmtCost             Float
+  businessExpense          Float
+  otherAmortization        Float
+  financeCost              Float
+  totalCost                Float
+  profitRate               Float
+  taxRate                  Float
+  procurementRate          Float
+  targetPreTaxRevenue      Float
+  finalQuote               Float
+  procurementAmount        Float
+  taxAmount                Float
+  implNaturalDays          Float
+  weightedPaymentArrival   Float
+  calcContext              Json
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  quote                    Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
 }
 
 model QuoteResultSnapshot {
-  id          String   @id @default(cuid())
-  quoteId     String
-  resultData  String
-  formData    String
-  createdById String
-  createdAt   DateTime @default(now())
-  quote       Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  quoteId      String
+  resultData   Json
+  formData     Json
+  createdById  String
+  createdAt    DateTime @default(now())
+  quote        Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
 }
 
 model PricingDirectRule {
-  id         String   @id @default(cuid())
-  ruleKey    String   @unique
-  ruleName   String
-  value      Float
-  conditions String?
-  enabled    Boolean  @default(true)
-  updatedAt  DateTime @updatedAt
-}
-
-model PricingStepRule {
-  id        String   @id @default(cuid())
-  ruleKey   String   @unique
-  ruleName  String
-  stepSize  Int
-  freeSteps Int      @default(0)
-  stepPrice Float
-  enabled   Boolean  @default(true)
-  updatedAt DateTime @updatedAt
-}
-
-model PricingComboRule {
   id          String   @id @default(cuid())
   ruleKey     String   @unique
   ruleName    String
-  expression  String
-  outputType  String
-  outputValue Float
+  value       Float
+  conditions  Json?
   enabled     Boolean  @default(true)
   updatedAt   DateTime @updatedAt
 }
 
+model PricingStepRule {
+  id          String   @id @default(cuid())
+  ruleKey     String   @unique
+  ruleName    String
+  stepSize    Int
+  freeSteps   Int      @default(0)
+  stepPrice   Float
+  enabled     Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+model PricingComboRule {
+  id             String   @id @default(cuid())
+  ruleKey        String   @unique
+  ruleName       String
+  expression     String
+  outputType     String
+  outputValue    Float
+  enabled        Boolean  @default(true)
+  updatedAt      DateTime @updatedAt
+}
+
 model SystemParameter {
-  id         String   @id @default(cuid())
-  paramKey   String   @unique
-  paramName  String
-  paramValue Float
-  updatedAt  DateTime @updatedAt
+  id          String   @id @default(cuid())
+  paramKey    String   @unique
+  paramName   String
+  paramValue  Float
+  updatedAt   DateTime @updatedAt
 }
 
 model FormFieldRule {
-  id            String   @id @default(cuid())
-  fieldKey      String   @unique
-  label         String
-  fieldType     String
-  fieldOptions  String?
-  visibleWhen   String?
-  requiredWhen  String?
-  validationRule String?
-  editableRoles String
-  section       String
-  orderNo       Int
-  updatedAt     DateTime @updatedAt
+  id             String   @id @default(cuid())
+  fieldKey        String   @unique
+  label           String
+  fieldType       String
+  fieldOptions    Json?
+  visibleWhen     String?
+  requiredWhen    String?
+  validationRule  String?
+  editableRoles   String
+  section         String
+  orderNo         Int
+  updatedAt       DateTime @updatedAt
 }
 
 model AuditLog {
-  id         String   @id @default(cuid())
-  userId     String
-  action     String
-  entityType String
-  entityId   String?
-  detail     String?
-  createdAt  DateTime @default(now())
-  user       User     @relation(fields: [userId], references: [id])
+  id          String   @id @default(cuid())
+  userId      String
+  action      String
+  entityType  String
+  entityId    String?
+  detail      Json?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
 }

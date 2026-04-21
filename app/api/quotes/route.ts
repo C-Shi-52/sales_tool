@@ -2,7 +2,6 @@ import { requireAuth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { writeAudit } from '@/lib/audit';
-import { toJsonString } from '@/lib/json';
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,10 +15,10 @@ export async function POST(req: NextRequest) {
         remarks: body.remarks,
         form: {
           create: {
-            formData: toJsonString({
+            formData: {
               owner_user_id: user.id,
               project_name: body.projectName || '未命名项目'
-            })
+            }
           }
         }
       }

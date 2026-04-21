@@ -1,6 +1,5 @@
 import { canAccessQuote, requireAuth } from '@/lib/auth';
 import { writeAudit } from '@/lib/audit';
-import { toJsonString } from '@/lib/json';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -20,8 +19,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       data: {
         quoteId: quote.id,
         createdById: user.id,
-        formData: form?.formData || toJsonString({}),
-        resultData: toJsonString(result)
+        formData: (form?.formData || {}) as any,
+        resultData: result as any
       }
     });
     await writeAudit(user.id, 'QUOTE_SNAPSHOT_SAVED', 'QUOTE', quote.id, { snapshotId: snap.id });

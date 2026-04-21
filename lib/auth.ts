@@ -5,7 +5,7 @@ import { prisma } from './prisma';
 
 const TOKEN_NAME = 'sales_tool_token';
 
-export type SessionUser = { id: string; username: string; role: string };
+export type SessionUser = { id: string; username: string; role: 'SALES' | 'ADMIN' };
 
 export function signToken(user: SessionUser) {
   const secret = process.env.JWT_SECRET || 'dev-secret';

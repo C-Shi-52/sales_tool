@@ -1,14 +1,12 @@
 import { requireAdmin } from '@/lib/auth';
 import { writeAudit } from '@/lib/audit';
-import { parseJsonString, toJsonString } from '@/lib/json';
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   try {
     await requireAdmin(req);
-    const rows = await prisma.formFieldRule.findMany({ orderBy: { orderNo: 'asc' } });
-    return NextResponse.json(rows.map((r) => ({ ...r, fieldOptions: parseJsonString(r.fieldOptions, null) })));
+    return NextResponse.json(await prisma.formFieldRule.findMany({ orderBy: { orderNo: 'asc' } }));
   } catch {
     return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
   }
@@ -25,12 +23,11 @@ export async function PUT(req: NextRequest) {
         visibleWhen: body.visibleWhen,
         requiredWhen: body.requiredWhen,
         validationRule: body.validationRule,
-        editableRoles: body.editableRoles,
-        fieldOptions: body.fieldOptions ? toJsonString(body.fieldOptions) : undefined
+        editableRoles: body.editableRoles
       }
     });
     await writeAudit(user.id, 'ADMIN_RULE_UPDATED', 'FORM_FIELD_RULE', item.id, body);
-    return NextResponse.json({ ...item, fieldOptions: parseJsonString(item.fieldOptions, null) });
+    return NextResponse.json(item);
   } catch {
     return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
   }
