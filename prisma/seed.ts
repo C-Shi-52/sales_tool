@@ -17,6 +17,11 @@ async function main() {
     update: {},
     create: { username: 'sales1', passwordHash: salesPwd, role: 'SALES' }
   });
+  await prisma.user.upsert({
+    where: { username: 'sales2' },
+    update: {},
+    create: { username: 'sales2', passwordHash: salesPwd, role: 'SALES' }
+  });
 
   const systemParams = [
     ['default_profit_rate', '默认利润率', 0.2],

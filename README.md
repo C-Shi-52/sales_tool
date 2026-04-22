@@ -162,7 +162,7 @@ npm run db:init
 
 初始化后将自动创建：
 - 管理员账号：`admin / admin123`
-- 销售账号：`sales1 / sales123`
+- 销售账号：`sales1 / sales123`、`sales2 / sales123`
 - 默认系统参数、步长规则、直接规则、组合规则、动态字段规则
 
 ---

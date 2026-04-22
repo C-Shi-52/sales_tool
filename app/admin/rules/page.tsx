@@ -42,8 +42,20 @@ export default function AdminRulePage() {
   const [params, setParams] = useState<any[]>([]);
   const [fields, setFields] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
+  const [forbidden, setForbidden] = useState(false);
 
   async function load() {
+    const me = await fetch('/api/auth/me');
+    if (!me.ok) {
+      setForbidden(true);
+      return;
+    }
+    const user = await me.json();
+    if (user.role !== 'ADMIN') {
+      setForbidden(true);
+      return;
+    }
+
     const [d, s, c, p, f, l] = await Promise.all([
       fetch('/api/admin/direct-rules').then((x) => x.json()),
       fetch('/api/admin/step-rules').then((x) => x.json()),
@@ -61,6 +73,17 @@ export default function AdminRulePage() {
     await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(row) });
     load();
   };
+
+  if (forbidden) {
+    return (
+      <div className="container">
+        <div className="card">
+          <h2>无权限访问</h2>
+          <p>仅管理员可查看价格规则页。</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container">

@@ -1,14 +1,18 @@
 'use client';
 
 import { DynamicQuoteForm } from '@/app/components/DynamicQuoteForm';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+
+type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
 export default function QuoteFormPage({ params }: { params: { id: string } }) {
   const [rules, setRules] = useState<any[]>([]);
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [msg, setMsg] = useState('');
+  const [saveState, setSaveState] = useState<SaveState>('idle');
+  const initializedRef = useRef(false);
+  const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   async function load() {
     const [q, r] = await Promise.all([
@@ -17,9 +21,11 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
     ]);
     setFormData(q?.form?.formData || {});
     setRules(r || []);
+    initializedRef.current = true;
   }
 
-  async function saveDraft(strictValidation = false) {
+  async function saveDraft(strictValidation = false, silent = false) {
+    if (!silent) setSaveState('saving');
     const res = await fetch(`/api/quotes/${params.id}/form`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -27,41 +33,56 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
     });
     const data = await res.json();
     if (!res.ok) {
-      setMsg(data.message || '保存失败');
-      return;
+      setSaveState('error');
+      return false;
     }
     setErrors(data.errors || {});
-    setMsg('已保存');
+    setSaveState('saved');
+    return true;
   }
 
-  async function calculate() {
-    await saveDraft(true);
-    const res = await fetch(`/api/quotes/${params.id}/calculate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
-    if (res.ok) {
-      window.location.href = `/quotes/${params.id}/result`;
-    } else {
-      const d = await res.json();
-      alert(d.message || '计算失败');
+  async function goResultPage() {
+    const ok = await saveDraft(true);
+    if (!ok) {
+      alert('当前有未通过校验的字段，请先修正再查看报价');
+      return;
     }
+    window.location.href = `/quotes/${params.id}/result`;
   }
 
   useEffect(() => {
     load();
   }, []);
 
+  useEffect(() => {
+    if (!initializedRef.current) return;
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    setSaveState('saving');
+    saveTimerRef.current = setTimeout(() => {
+      saveDraft(false, true);
+    }, 800);
+
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
+  }, [formData]);
+
   return (
     <div className="container">
       <div className="card" style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <h2>需求填写（动态表单）</h2>
+        <h2>需求填写（自动保存）</h2>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="secondary" onClick={() => saveDraft(false)}>保存草稿</button>
-          <button onClick={calculate}>重新计算报价</button>
-          <Link href={`/quotes/${params.id}/result`}>结果页</Link>
+          <Link href="/quotes"><button className="secondary">返回</button></Link>
+          <button onClick={goResultPage}>查看报价</button>
         </div>
       </div>
       {errors.payment_ratios && <p className="error">{errors.payment_ratios}</p>}
       <DynamicQuoteForm rules={rules} formData={formData} setFormData={setFormData} errors={errors} />
-      {msg && <p className="small">{msg}</p>}
+      <p className="small">
+        {saveState === 'saving' && '正在自动保存...'}
+        {saveState === 'saved' && '已自动保存'}
+        {saveState === 'error' && '自动保存失败，请检查网络后重试'}
+      </p>
     </div>
   );
 }

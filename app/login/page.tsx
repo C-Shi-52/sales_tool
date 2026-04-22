@@ -37,7 +37,7 @@ export default function LoginPage() {
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           {error && <p className="error">{error}</p>}
           <button type="submit" style={{ marginTop: 12 }}>登录</button>
-          <p className="small">测试账号：admin/admin123 或 sales1/sales123</p>
+          <p className="small">测试账号：admin/admin123、sales1/sales123、sales2/sales123</p>
         </form>
       </div>
     </div>
