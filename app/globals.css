@@ -55,6 +55,7 @@ button.ghost-danger { background: #fff; color: #dc2626; border: 1px solid #fecac
 .section-title { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; }
 .section-icon { font-size: 18px; line-height: 1; }
 .check-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+.check-grid-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
 .check-item {
   display: flex;
   align-items: center;
@@ -72,3 +73,5 @@ button.ghost-danger { background: #fff; color: #dc2626; border: 1px solid #fecac
 .int-stepper button { min-width: 34px; padding: 8px 0; font-weight: 700; }
 .int-stepper input { margin-top: 0; text-align: center; max-width: 140px; }
 .wide-gap-grid { gap: 20px; }
+.external-config-stack { display: flex; flex-direction: column; gap: 10px; }
+.external-config-row { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; background: #fff; }
