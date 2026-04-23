@@ -101,7 +101,13 @@ export function DynamicQuoteForm({
     'alert_delivery_phone_sms',
     'need_other_feature',
     'other_feature_desc',
-    'other_feature_man_days'
+    'other_feature_man_days',
+    'need_shengong_suite',
+    'allow_distribution',
+    'distribution_license_count',
+    'editor_license_type',
+    'editor_license_years',
+    'editor_license_count'
   ]);
 
   const genericRules = rules.filter((r) => !custom3dKeys.has(r.fieldKey) && !customModuleKeys.has(r.fieldKey));
@@ -197,12 +203,12 @@ export function DynamicQuoteForm({
     );
   }
 
-  function renderIntInput(fieldKey: string, label: string, required = false, hint?: string) {
+  function renderIntInput(fieldKey: string, label: string, required = false, hint?: string, minValue = 0) {
     const rawValue = formData[fieldKey];
     const displayValue = Number.isFinite(Number(rawValue)) ? String(Math.trunc(Number(rawValue))) : '';
-    const current = Number.isFinite(Number(rawValue)) ? Math.trunc(Number(rawValue)) : 0;
+    const current = Number.isFinite(Number(rawValue)) ? Math.trunc(Number(rawValue)) : minValue;
     const updateInt = (value: number) => {
-      update(fieldKey, Math.max(0, Math.trunc(value)));
+      update(fieldKey, Math.max(minValue, Math.trunc(value)));
     };
 
     return (
@@ -210,7 +216,7 @@ export function DynamicQuoteForm({
         <label className="label">{label}{required ? ' *' : ''}</label>
         {hint && <div className="small">{hint}</div>}
         <div className="int-stepper">
-          <button type="button" className="secondary-outline" onClick={() => updateInt(Math.max(0, current - 1))}>−</button>
+          <button type="button" className="secondary-outline" onClick={() => updateInt(Math.max(minValue, current - 1))}>−</button>
           <input
             type="number"
             step={1}
@@ -423,7 +429,10 @@ export function DynamicQuoteForm({
               <div className="small">请选择需要对接的内容，所选内容将分别计入工作量</div>
               <div className="check-grid-two">
                 {renderCheckItem('has_unified_platform', '统一数据平台对接')}
-                {renderCheckItem('has_external_platform_data', '统一平台外数据对接')}
+                <div>
+                  {renderCheckItem('has_external_platform_data', '统一平台外的系统对接')}
+                  <div className="small" style={{ marginTop: 4 }}>零散对接的系统</div>
+                </div>
                 <div className="small" style={{ gridColumn: '1 / -1', marginTop: -4 }}>
                   说明：PLC/DCS/物联网/数据中心等归集了好多个系统数据的平台。
                 </div>
@@ -598,6 +607,86 @@ export function DynamicQuoteForm({
                   onChange={(e) => update('other_feature_desc', e.target.value)}
                 />
                 {errors.other_feature_desc && <div className="error">{errors.other_feature_desc}</div>}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="card">
+        {renderSectionTitle('产品授权')}
+        {renderSwitch('need_shengong_suite', '是否需要向用户提供神工套件')}
+        {isChecked('need_shengong_suite') && (
+          <div className="subsection-card" style={{ marginTop: 12 }}>
+            <h4 className="subsection-title">授权情况</h4>
+            <div className="section-divider" />
+            <div className="grid-2 wide-gap-grid">
+              <div>
+                <label className="label">神工套件授权类型 *</label>
+                <select
+                  value={formData.editor_license_type || ''}
+                  onChange={(e) => update('editor_license_type', e.target.value)}
+                >
+                  <option value="">请选择</option>
+                  <option value="永久">永久</option>
+                  <option value="年度">年度</option>
+                </select>
+                {errors.editor_license_type && <div className="error">{errors.editor_license_type}</div>}
+              </div>
+              {renderIntInput('editor_license_count', '授权数量', true, undefined, 1)}
+
+              {formData.editor_license_type === '年度' && (
+                <>
+                  {renderIntInput('editor_license_years', '授权年限', true, undefined, 1)}
+                  <div />
+                </>
+              )}
+
+              <div>
+                <label className="label">额外购买分发授权数量 *</label>
+                <div className="small">年度授权每套赠送2个分发，永久授权每套赠送8个分发</div>
+                <div className="int-stepper">
+                  <button
+                    type="button"
+                    className="secondary-outline"
+                    onClick={() => {
+                      const current = Number.isFinite(Number(formData.distribution_license_count))
+                        ? Math.trunc(Number(formData.distribution_license_count))
+                        : 0;
+                      const nextValue = Math.max(0, current - 1);
+                      setFormData({ ...formData, distribution_license_count: nextValue, allow_distribution: nextValue > 0 ? '是' : '否' });
+                    }}
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    step={1}
+                    value={Number.isFinite(Number(formData.distribution_license_count)) ? String(Math.trunc(Number(formData.distribution_license_count))) : ''}
+                    onChange={(e) => {
+                      if (e.target.value === '') {
+                        setFormData({ ...formData, distribution_license_count: '', allow_distribution: '否' });
+                        return;
+                      }
+                      const nextValue = Math.max(0, Math.trunc(Number(e.target.value)));
+                      setFormData({ ...formData, distribution_license_count: nextValue, allow_distribution: nextValue > 0 ? '是' : '否' });
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="secondary-outline"
+                    onClick={() => {
+                      const current = Number.isFinite(Number(formData.distribution_license_count))
+                        ? Math.trunc(Number(formData.distribution_license_count))
+                        : 0;
+                      const nextValue = current + 1;
+                      setFormData({ ...formData, distribution_license_count: nextValue, allow_distribution: '是' });
+                    }}
+                  >
+                    ＋
+                  </button>
+                </div>
+                {errors.distribution_license_count && <div className="error">{errors.distribution_license_count}</div>}
               </div>
             </div>
           </div>
