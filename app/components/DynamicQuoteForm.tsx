@@ -68,8 +68,30 @@ export function DynamicQuoteForm({
     'scene_cat_4_enabled', 'scene_cat_4_quantity', 'scene_cat_4_model_condition', 'scene_cat_4_precision',
     'scene_cat_5_enabled', 'scene_cat_5_quantity', 'scene_cat_5_model_condition', 'scene_cat_5_precision'
   ]);
+  const customModuleKeys = new Set([
+    'need_data_integration',
+    'need_file_import',
+    'need_software_integration',
+    'need_hardware_integration',
+    'has_unified_platform',
+    'has_external_platform_data',
+    'need_history_processing',
+    'unified_platform_count',
+    'unified_platform_point_count',
+    'external_software_system_count',
+    'external_software_point_count',
+    'external_hardware_system_count',
+    'external_hardware_point_count',
+    'need_video_monitoring',
+    'use_unified_video_platform',
+    'bind_video_to_3d',
+    'need_video_extra_data',
+    'video_point_count',
+    'need_dashboard',
+    'dashboard_count'
+  ]);
 
-  const genericRules = rules.filter((r) => !custom3dKeys.has(r.fieldKey));
+  const genericRules = rules.filter((r) => !custom3dKeys.has(r.fieldKey) && !customModuleKeys.has(r.fieldKey));
   const sections = Array.from(new Set(genericRules.map((r) => r.section)));
   const baseSectionName = '基础信息';
   const baseSectionFields = genericRules.filter((r) => r.section === baseSectionName);
@@ -123,6 +145,78 @@ export function DynamicQuoteForm({
     );
   }
 
+  function isChecked(fieldKey: string) {
+    return formData[fieldKey] === '是';
+  }
+
+  function renderSwitch(fieldKey: string, label: string) {
+    const checked = isChecked(fieldKey);
+    return (
+      <div>
+        <label className="label">{label}</label>
+        <div className="switch-row">
+          <button
+            type="button"
+            className={`switch ${checked ? 'on' : ''}`}
+            aria-pressed={checked}
+            onClick={() => update(fieldKey, checked ? '否' : '是')}
+          >
+            <span className="switch-knob" />
+          </button>
+          <span className="switch-label">{checked ? '是' : '否'}</span>
+        </div>
+        {errors[fieldKey] && <div className="error">{errors[fieldKey]}</div>}
+      </div>
+    );
+  }
+
+  function renderCheckItem(fieldKey: string, label: string) {
+    const checked = isChecked(fieldKey);
+    return (
+      <label className="check-item" key={fieldKey}>
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => update(fieldKey, e.target.checked ? '是' : '否')}
+        />
+        <span>{label}</span>
+      </label>
+    );
+  }
+
+  function renderIntInput(fieldKey: string, label: string, required = false, hint?: string) {
+    const rawValue = formData[fieldKey];
+    const displayValue = Number.isFinite(Number(rawValue)) ? String(Math.trunc(Number(rawValue))) : '';
+    const current = Number.isFinite(Number(rawValue)) ? Math.trunc(Number(rawValue)) : 0;
+    const updateInt = (value: number) => {
+      update(fieldKey, Math.max(0, Math.trunc(value)));
+    };
+
+    return (
+      <div>
+        <label className="label">{label}{required ? ' *' : ''}</label>
+        {hint && <div className="small">{hint}</div>}
+        <div className="int-stepper">
+          <button type="button" className="secondary-outline" onClick={() => updateInt(Math.max(0, current - 1))}>−</button>
+          <input
+            type="number"
+            step={1}
+            value={displayValue}
+            onChange={(e) => {
+              if (e.target.value === '') {
+                update(fieldKey, '');
+                return;
+              }
+              updateInt(Number(e.target.value));
+            }}
+          />
+          <button type="button" className="secondary-outline" onClick={() => updateInt(current + 1)}>＋</button>
+        </div>
+        {errors[fieldKey] && <div className="error">{errors[fieldKey]}</div>}
+      </div>
+    );
+  }
+
   const renderField = (field: FieldRule) => {
     const visible = evalExpr(field.visibleWhen, formData);
     if (!visible) return null;
@@ -165,20 +259,7 @@ export function DynamicQuoteForm({
 
       <div className="card">
         {renderSectionTitle('三维场景')}
-        <div>
-          <label className="label">是否需要三维场景 *</label>
-          <div className="switch-row">
-            <button
-              type="button"
-              className={`switch ${formData.need_3d_scene === '是' ? 'on' : ''}`}
-              aria-pressed={formData.need_3d_scene === '是'}
-              onClick={() => update('need_3d_scene', formData.need_3d_scene === '是' ? '否' : '是')}
-            >
-              <span className="switch-knob" />
-            </button>
-            <span className="switch-label">{formData.need_3d_scene === '是' ? '是' : '否'}</span>
-          </div>
-        </div>
+        {renderSwitch('need_3d_scene', '是否需要三维场景 *')}
 
         {formData.need_3d_scene === '是' && (
           <>
@@ -300,6 +381,85 @@ export function DynamicQuoteForm({
               </div>
             </div>
           </>
+        )}
+      </div>
+
+      <div className="card">
+        {renderSectionTitle('数据对接')}
+        {renderSwitch('need_data_integration', '是否需要数据对接')}
+        {isChecked('need_data_integration') && (
+          <>
+            <div className="subsection-card" style={{ marginTop: 12 }}>
+              <h4 className="subsection-title">对接内容（可多选）</h4>
+              <div className="small">请选择需要对接的内容，所选内容将分别计入工作量</div>
+              <div className="check-grid">
+                {renderCheckItem('need_file_import', '表格数据导入')}
+                {renderCheckItem('need_software_integration', '软件系统对接')}
+                {renderCheckItem('need_hardware_integration', '硬件设备对接')}
+                {renderCheckItem('has_unified_platform', '统一数据平台对接')}
+                {renderCheckItem('has_external_platform_data', '平台外数据对接')}
+                {renderCheckItem('need_history_processing', '历史数据处理')}
+              </div>
+            </div>
+
+            {isChecked('has_unified_platform') && (
+              <div className="subsection-card" style={{ marginTop: 12 }}>
+                <h4 className="subsection-title">统一数据平台配置</h4>
+                <div className="section-divider" />
+                <div className="grid-2">
+                  {renderIntInput('unified_platform_count', '平台数量', true)}
+                  {renderIntInput('unified_platform_point_count', '平台内平均数据点位数量', true)}
+                </div>
+              </div>
+            )}
+
+            {isChecked('has_external_platform_data') && (
+              <div className="subsection-card" style={{ marginTop: 12 }}>
+                <h4 className="subsection-title">平台外数据配置</h4>
+                <div className="section-divider" />
+                <div className="grid-2">
+                  {renderIntInput('external_software_system_count', '软件系统数量', true)}
+                  {renderIntInput('external_software_point_count', '软件系统平均数据点位数量', true)}
+                  {renderIntInput('external_hardware_system_count', '硬件系统数量', true)}
+                  {renderIntInput('external_hardware_point_count', '硬件系统平均数据点位数量', true)}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      <div className="card">
+        {renderSectionTitle('视频监控')}
+        {renderSwitch('need_video_monitoring', '是否需要视频监控')}
+        {isChecked('need_video_monitoring') && (
+          <>
+            <div className="subsection-card" style={{ marginTop: 12 }}>
+              <h4 className="subsection-title">监控接入内容（可多选）</h4>
+              <div className="check-grid">
+                {renderCheckItem('use_unified_video_platform', '通过统一监控平台接入')}
+                {renderCheckItem('bind_video_to_3d', '监控点与三维模型绑定')}
+                {renderCheckItem('need_video_extra_data', '对接除视频画面外的数据')}
+              </div>
+            </div>
+            <div className="subsection-card" style={{ marginTop: 12 }}>
+              <h4 className="subsection-title">监控规模</h4>
+              <div className="section-divider" />
+              {renderIntInput('video_point_count', '视频监控点位数量', true)}
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="card">
+        {renderSectionTitle('二维看板')}
+        {renderSwitch('need_dashboard', '是否需要二维看板')}
+        {isChecked('need_dashboard') && (
+          <div className="subsection-card" style={{ marginTop: 12 }}>
+            <h4 className="subsection-title">看板规模</h4>
+            <div className="section-divider" />
+            {renderIntInput('dashboard_count', '看板数量', true)}
+          </div>
         )}
       </div>
 
