@@ -34,8 +34,8 @@ const MODEL_PRECISIONS = [
   '外观+精细内部结构，或者对建模精度有要求'
 ];
 
-function evalExpr(expression: string | null | undefined, data: Record<string, any>) {
-  if (!expression) return true;
+function evalExpr(expression: string | null | undefined, data: Record<string, any>, defaultValue = true) {
+  if (!expression) return defaultValue;
   try {
     const fn = new Function('data', `with(data){ return (${expression}); }`);
     return !!fn(data);
@@ -98,11 +98,36 @@ export function DynamicQuoteForm({
     setFormData({ ...formData, model_requirements: next });
   }
 
+  function sectionIcon(section: string) {
+    const iconMap: Record<string, string> = {
+      基础信息: '📋',
+      三维场景: '🧊',
+      数据对接: '🔗',
+      视频监控: '🎥',
+      二维看板: '📊',
+      预警功能: '🚨',
+      其他功能: '🧩',
+      产品授权: '🔐',
+      实施管理: '🛠️',
+      回款: '💰'
+    };
+    return iconMap[section] || '📌';
+  }
+
+  function renderSectionTitle(section: string) {
+    return (
+      <h3 className="section-title">
+        <span className="section-icon" aria-hidden>{sectionIcon(section)}</span>
+        {section}
+      </h3>
+    );
+  }
+
   const renderField = (field: FieldRule) => {
     const visible = evalExpr(field.visibleWhen, formData);
     if (!visible) return null;
 
-    const required = evalExpr(field.requiredWhen, formData);
+    const required = evalExpr(field.requiredWhen, formData, false);
     const value = formData[field.fieldKey] ?? '';
 
     return (
@@ -131,7 +156,7 @@ export function DynamicQuoteForm({
     <>
       {baseSectionFields.length > 0 && (
         <div className="card" key={baseSectionName}>
-          <h3>{baseSectionName}</h3>
+          {renderSectionTitle(baseSectionName)}
           <div className="grid-2">
             {baseSectionFields.map((f) => renderField(f))}
           </div>
@@ -139,7 +164,7 @@ export function DynamicQuoteForm({
       )}
 
       <div className="card">
-        <h3>三维场景</h3>
+        {renderSectionTitle('三维场景')}
         <div>
           <label className="label">是否需要三维场景 *</label>
           <div className="switch-row">
@@ -282,7 +307,7 @@ export function DynamicQuoteForm({
         const fields = genericRules.filter((r) => r.section === section);
         return (
           <div className="card" key={section}>
-            <h3>{section}</h3>
+            {renderSectionTitle(section)}
             <div className="grid-2">
               {fields.map((f) => renderField(f))}
             </div>

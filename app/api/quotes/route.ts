@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
         form: {
           create: {
             formData: toJsonString({
-              owner_user_id: user.id,
               project_name: body.projectName || '未命名项目'
             })
           }
