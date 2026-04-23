@@ -98,7 +98,10 @@ export function DynamicQuoteForm({
     'trend_algorithm_count',
     'alert_delivery_internal',
     'alert_delivery_external',
-    'alert_delivery_phone_sms'
+    'alert_delivery_phone_sms',
+    'need_other_feature',
+    'other_feature_desc',
+    'other_feature_man_days'
   ]);
 
   const genericRules = rules.filter((r) => !custom3dKeys.has(r.fieldKey) && !customModuleKeys.has(r.fieldKey));
@@ -509,69 +512,93 @@ export function DynamicQuoteForm({
         {renderSectionTitle('预警功能')}
         {renderSwitch('need_alerting', '是否需要预警功能')}
         {isChecked('need_alerting') && (
-          <div className="subsection-card" style={{ marginTop: 12 }}>
-            <h4 className="subsection-title">预警规则（可多选）</h4>
-            <div className="small">请选择客户需要的预警规则，所选内容将分别计入工作量。</div>
-            <div className="check-grid-two">
-              <label className="check-item">
-                <input
-                  type="checkbox"
-                  checked={isChecked('alert_rule_event')}
-                  onChange={(e) => updateAlertBasisAndDelivery({ ...formData, alert_rule_event: e.target.checked ? '是' : '否' })}
-                />
-                <span>系统监测到某件事情发生时发出预警</span>
-              </label>
-              <label className="check-item">
-                <input
-                  type="checkbox"
-                  checked={isChecked('alert_rule_threshold')}
-                  onChange={(e) => updateAlertBasisAndDelivery({ ...formData, alert_rule_threshold: e.target.checked ? '是' : '否' })}
-                />
-                <span>采集到的数值超过或低于阈值时发出预警</span>
-              </label>
-              <label className="check-item" style={{ gridColumn: '1 / -1' }}>
-                <input
-                  type="checkbox"
-                  checked={isChecked('alert_rule_trend')}
-                  onChange={(e) => updateAlertBasisAndDelivery({ ...formData, alert_rule_trend: e.target.checked ? '是' : '否' })}
-                />
-                <span>通过仿真计算预测到某种趋势时发出预警</span>
-              </label>
-            </div>
-            {isChecked('alert_rule_trend') && (
-              <div style={{ marginTop: 10 }}>
-                {renderIntInput('trend_algorithm_count', '仿真计算趋势预测算法个数', true)}
+          <>
+            <div className="subsection-card" style={{ marginTop: 12 }}>
+              <h4 className="subsection-title">预警规则（可多选）</h4>
+              <div className="small">请选择客户需要的预警规则，所选内容将分别计入工作量。</div>
+              <div className="check-grid-two">
+                <label className="check-item">
+                  <input
+                    type="checkbox"
+                    checked={isChecked('alert_rule_event')}
+                    onChange={(e) => updateAlertBasisAndDelivery({ ...formData, alert_rule_event: e.target.checked ? '是' : '否' })}
+                  />
+                  <span>系统监测到某件事情发生时发出预警</span>
+                </label>
+                <label className="check-item">
+                  <input
+                    type="checkbox"
+                    checked={isChecked('alert_rule_threshold')}
+                    onChange={(e) => updateAlertBasisAndDelivery({ ...formData, alert_rule_threshold: e.target.checked ? '是' : '否' })}
+                  />
+                  <span>采集到的数值超过或低于阈值时发出预警</span>
+                </label>
+                <label className="check-item">
+                  <input
+                    type="checkbox"
+                    checked={isChecked('alert_rule_trend')}
+                    onChange={(e) => updateAlertBasisAndDelivery({ ...formData, alert_rule_trend: e.target.checked ? '是' : '否' })}
+                  />
+                  <span>通过仿真计算预测到某种趋势时发出预警</span>
+                </label>
               </div>
-            )}
+              {isChecked('alert_rule_trend') && (
+                <div style={{ marginTop: 10 }}>
+                  {renderIntInput('trend_algorithm_count', '仿真计算趋势预测算法个数', true)}
+                </div>
+              )}
+            </div>
 
-            <h4 className="subsection-title" style={{ marginTop: 16 }}>预警方式（可多选）</h4>
-            <div className="small">请选择客户需要的预警方式，所选内容将分别计入工作量。</div>
-            <div className="check-grid-two">
-              <label className="check-item">
-                <input
-                  type="checkbox"
-                  checked={isChecked('alert_delivery_internal')}
-                  onChange={(e) => updateAlertBasisAndDelivery({ ...formData, alert_delivery_internal: e.target.checked ? '是' : '否' })}
+            <div className="subsection-card" style={{ marginTop: 12 }}>
+              <h4 className="subsection-title">预警方式（可多选）</h4>
+              <div className="small">请选择客户需要的预警方式，所选内容将分别计入工作量。</div>
+              <div className="check-grid-two">
+                <label className="check-item">
+                  <input
+                    type="checkbox"
+                    checked={isChecked('alert_delivery_internal')}
+                    onChange={(e) => updateAlertBasisAndDelivery({ ...formData, alert_delivery_internal: e.target.checked ? '是' : '否' })}
+                  />
+                  <span>系统内进行通知</span>
+                </label>
+                <label className="check-item">
+                  <input
+                    type="checkbox"
+                    checked={isChecked('alert_delivery_external')}
+                    onChange={(e) => updateAlertBasisAndDelivery({ ...formData, alert_delivery_external: e.target.checked ? '是' : '否' })}
+                  />
+                  <span>通知推送到其他外部系统</span>
+                </label>
+                <label className="check-item">
+                  <input
+                    type="checkbox"
+                    checked={isChecked('alert_delivery_phone_sms')}
+                    onChange={(e) => updateAlertBasisAndDelivery({ ...formData, alert_delivery_phone_sms: e.target.checked ? '是' : '否' })}
+                  />
+                  <span>电话或短信方式通知</span>
+                </label>
+              </div>
+              <div className="small" style={{ marginTop: 8 }}>客户需购买对应云服务。</div>
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="card">
+        {renderSectionTitle('其他功能')}
+        {renderSwitch('need_other_feature', '是否存在其他功能需求')}
+        {isChecked('need_other_feature') && (
+          <div className="subsection-card" style={{ marginTop: 12 }}>
+            <div className="grid-2 wide-gap-grid">
+              {renderIntInput('other_feature_man_days', '研究院给出的人日成本估算（单位：人/日）', true)}
+              <div>
+                <label className="label">其他功能描述</label>
+                <textarea
+                  value={formData.other_feature_desc || ''}
+                  onChange={(e) => update('other_feature_desc', e.target.value)}
                 />
-                <span>系统内进行通知</span>
-              </label>
-              <label className="check-item">
-                <input
-                  type="checkbox"
-                  checked={isChecked('alert_delivery_external')}
-                  onChange={(e) => updateAlertBasisAndDelivery({ ...formData, alert_delivery_external: e.target.checked ? '是' : '否' })}
-                />
-                <span>通知推送到其他外部系统</span>
-              </label>
-              <label className="check-item" style={{ gridColumn: '1 / -1' }}>
-                <input
-                  type="checkbox"
-                  checked={isChecked('alert_delivery_phone_sms')}
-                  onChange={(e) => updateAlertBasisAndDelivery({ ...formData, alert_delivery_phone_sms: e.target.checked ? '是' : '否' })}
-                />
-                <span>电话或短信方式通知</span>
-              </label>
-              <div className="small" style={{ gridColumn: '1 / -1', marginTop: -4 }}>客户需购买对应云服务。</div>
+                {errors.other_feature_desc && <div className="error">{errors.other_feature_desc}</div>}
+              </div>
             </div>
           </div>
         )}
