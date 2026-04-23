@@ -53,23 +53,66 @@ export function calculateQuote(input: {
 
   let sceneCost = 0;
   if (formData.need_3d_scene === '是') {
-    sceneCost += Number(formData.building_model_area || 0) * 300;
-    for (let i = 1; i <= 5; i++) {
-      if (formData[`scene_cat_${i}_enabled`] === '是') {
-        const qty = Number(formData[`scene_cat_${i}_quantity`] || 0);
-        const cond = formData[`scene_cat_${i}_model_condition`];
-        const prec = formData[`scene_cat_${i}_precision`];
-        const condMap: Record<string, string> = { 基础: 'basic', 中等: 'medium', 复杂: 'hard' };
-        const preMap: Record<string, string> = { 低: 'low', 中: 'mid', 高: 'high' };
-        const condFactor = getDirect(directRules, `model_condition_${condMap[cond]}`, 1);
-        const precFactor = getDirect(directRules, `precision_${preMap[prec]}`, 1);
+    const rows = Array.isArray(formData.model_requirements) ? formData.model_requirements : [];
+    const condMap: Record<string, string> = {
+      基础: 'basic',
+      中等: 'medium',
+      复杂: 'hard',
+      '有完整的较规范的模型，我们只需要做模型处理': 'basic',
+      '客户可以提供完整模型，但较为杂乱': 'medium',
+      '部分由客户提供，我们仍需要进行部分建模': 'medium',
+      '全部由我们自行建模': 'hard'
+    };
+    const preMap: Record<string, string> = {
+      低: 'low',
+      中: 'mid',
+      高: 'high',
+      '仅需要外观，不需要内部结构': 'low',
+      '外观+粗略内部结构': 'mid',
+      '外观+精细内部结构，或者对建模精度有要求': 'high'
+    };
+
+    if (rows.length > 0) {
+      for (const row of rows) {
+        const qty = Number(row.quantity || 0);
+        if (row.model_type === '建筑类模型') {
+          sceneCost += qty * 300;
+          continue;
+        }
+        const condFactor = getDirect(directRules, `model_condition_${condMap[row.model_condition]}`, 1);
+        const precFactor = getDirect(directRules, `precision_${preMap[row.precision]}`, 1);
         sceneCost += qty * 5000 * condFactor * precFactor;
       }
+    } else {
+      sceneCost += Number(formData.building_model_area || 0) * 300;
+      for (let i = 1; i <= 5; i++) {
+        if (formData[`scene_cat_${i}_enabled`] === '是') {
+          const qty = Number(formData[`scene_cat_${i}_quantity`] || 0);
+          const cond = formData[`scene_cat_${i}_model_condition`];
+          const prec = formData[`scene_cat_${i}_precision`];
+          const condFactor = getDirect(directRules, `model_condition_${condMap[cond]}`, 1);
+          const precFactor = getDirect(directRules, `precision_${preMap[prec]}`, 1);
+          sceneCost += qty * 5000 * condFactor * precFactor;
+        }
+      }
     }
-    const visMap: Record<string, string> = { 标准: 'normal', 良好: 'good', 电影级: 'best' };
+
+    const visMap: Record<string, string> = {
+      标准: 'normal',
+      良好: 'good',
+      电影级: 'best',
+      '低要求（弱于昆仑运营项目效果）': 'normal',
+      '中等要求（类似昆仑运营项目）': 'good',
+      '高要求（类似邯郸电厂项目）': 'best'
+    };
     sceneCost *= getDirect(directRules, `visual_effect_${visMap[formData.visual_effect_level]}`, 1);
     sceneCost *= comboValue(comboRules, 'hardware_constraint_factor', formData, 1) || 1;
-    sceneCost += comboValue(comboRules, 'modeling_basis_self_collection_bonus', formData, 0);
+
+    const isSelfCollection =
+      formData.modeling_basis === '需要我们自行采集部分或全部材料' ||
+      formData.modeling_basis === '部分由我方自行采集' ||
+      formData.modeling_basis === '完全由我方自行采集';
+    sceneCost += isSelfCollection ? comboValue(comboRules, 'modeling_basis_self_collection_bonus', { ...formData, modeling_basis: '部分由我方自行采集' }, 0) : 0;
     sceneCost += Number(formData.self_collection_cost || 0);
   }
   moduleCosts.scene_3d = round(sceneCost);
