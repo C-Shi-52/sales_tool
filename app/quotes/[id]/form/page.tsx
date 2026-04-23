@@ -25,8 +25,15 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
       need_data_integration: '否',
       need_video_monitoring: '否',
       need_dashboard: '否',
+      need_alerting: '否',
       need_software_integration: '否',
       need_hardware_integration: '否',
+      alert_rule_event: '否',
+      alert_rule_threshold: '否',
+      alert_rule_trend: '否',
+      alert_delivery_internal: '否',
+      alert_delivery_external: '否',
+      alert_delivery_phone_sms: '否',
       ...raw
     });
     setRules(r || []);
