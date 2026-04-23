@@ -19,7 +19,16 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
       fetch(`/api/quotes/${params.id}`).then((x) => x.json()),
       fetch('/api/form-field-rules').then((x) => (x.ok ? x.json() : []))
     ]);
-    setFormData(q?.form?.formData || {});
+    const raw = q?.form?.formData || {};
+    setFormData({
+      need_3d_scene: '否',
+      need_data_integration: '否',
+      need_video_monitoring: '否',
+      need_dashboard: '否',
+      need_software_integration: '否',
+      need_hardware_integration: '否',
+      ...raw
+    });
     setRules(r || []);
     initializedRef.current = true;
   }

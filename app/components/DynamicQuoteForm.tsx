@@ -393,11 +393,12 @@ export function DynamicQuoteForm({
               <h4 className="subsection-title">对接内容（可多选）</h4>
               <div className="small">请选择需要对接的内容，所选内容将分别计入工作量</div>
               <div className="check-grid">
-                {renderCheckItem('need_file_import', '表格数据导入')}
-                {renderCheckItem('need_software_integration', '软件系统对接')}
-                {renderCheckItem('need_hardware_integration', '硬件设备对接')}
                 {renderCheckItem('has_unified_platform', '统一数据平台对接')}
-                {renderCheckItem('has_external_platform_data', '平台外数据对接')}
+                <div className="small" style={{ gridColumn: '1 / -1', marginTop: -4 }}>
+                  说明：PLC/DCS/物联网/数据中心等归集了好多个系统数据的平台。
+                </div>
+                {renderCheckItem('has_external_platform_data', '统一平台外数据对接')}
+                {renderCheckItem('need_file_import', '表格数据导入')}
                 {renderCheckItem('need_history_processing', '历史数据处理')}
               </div>
             </div>
@@ -415,13 +416,25 @@ export function DynamicQuoteForm({
 
             {isChecked('has_external_platform_data') && (
               <div className="subsection-card" style={{ marginTop: 12 }}>
-                <h4 className="subsection-title">平台外数据配置</h4>
+                <h4 className="subsection-title">统一平台外数据对接配置</h4>
                 <div className="section-divider" />
+                <div className="grid-2 wide-gap-grid">
+                  {renderSwitch('need_software_integration', '对接统一平台外的软件系统')}
+                  {renderSwitch('need_hardware_integration', '对接统一平台外的硬件系统')}
+                </div>
                 <div className="grid-2">
-                  {renderIntInput('external_software_system_count', '软件系统数量', true)}
-                  {renderIntInput('external_software_point_count', '软件系统平均数据点位数量', true)}
-                  {renderIntInput('external_hardware_system_count', '硬件系统数量', true)}
-                  {renderIntInput('external_hardware_point_count', '硬件系统平均数据点位数量', true)}
+                  {isChecked('need_software_integration') && (
+                    <>
+                      {renderIntInput('external_software_system_count', '软件系统数量', true)}
+                      {renderIntInput('external_software_point_count', '软件系统平均数据点位数量', true)}
+                    </>
+                  )}
+                  {isChecked('need_hardware_integration') && (
+                    <>
+                      {renderIntInput('external_hardware_system_count', '硬件系统数量', true)}
+                      {renderIntInput('external_hardware_point_count', '硬件系统平均数据点位数量', true)}
+                    </>
+                  )}
                 </div>
               </div>
             )}
