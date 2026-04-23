@@ -6,6 +6,7 @@ a { color: #1d4ed8; text-decoration: none; }
 input, select, textarea { width: 100%; padding: 8px; margin-top: 6px; border: 1px solid #d1d5db; border-radius: 6px; }
 button { border: none; background: #2563eb; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
 button.secondary { background: #4b5563; }
+button.secondary-outline { background: #fff; color: #1f2937; border: 1px solid #cbd5e1; }
 button.danger { background: #dc2626; }
 .grid-2 { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
 .grid-3 { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
@@ -13,3 +14,40 @@ button.danger { background: #dc2626; }
 .error { color: #dc2626; font-size: 12px; }
 .topnav { background: #111827; color: white; padding: 10px 20px; display:flex; justify-content:space-between; }
 .small { font-size: 12px; color: #6b7280; }
+
+.form-header-card { background: transparent; box-shadow: none; padding: 0 0 8px; }
+.switch-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.switch {
+  position: relative;
+  width: 42px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid #94a3b8;
+  background: #cbd5e1;
+  padding: 0;
+}
+.switch.on { background: #2563eb; border-color: #2563eb; }
+.switch-knob {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translateX(2px);
+  transition: transform .15s ease-in-out;
+}
+.switch.on .switch-knob { transform: translateX(20px); }
+.switch-label { font-size: 13px; color: #374151; font-weight: 600; }
+.subsection-card { border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; padding: 14px; }
+.subsection-title { margin: 0 0 10px; color: #1e293b; }
+.requirement-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+.requirement-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.requirement-header h5 { margin: 0; font-size: 16px; }
+button.ghost-danger { background: #fff; color: #dc2626; border: 1px solid #fecaca; }
+.add-requirement-btn {
+  width: 100%;
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px dashed #93c5fd;
+  font-weight: 600;
+}
