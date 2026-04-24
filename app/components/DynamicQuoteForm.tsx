@@ -107,7 +107,14 @@ export function DynamicQuoteForm({
     'distribution_license_count',
     'editor_license_type',
     'editor_license_years',
-    'editor_license_count'
+    'editor_license_count',
+    'avg_impl_people',
+    'day_rate',
+    'total_labor_cost',
+    'need_onsite_dev',
+    'business_expense',
+    'other_amortization',
+    'onsite_mode'
   ]);
 
   const genericRules = rules.filter((r) => !custom3dKeys.has(r.fieldKey) && !customModuleKeys.has(r.fieldKey));
@@ -286,8 +293,23 @@ export function DynamicQuoteForm({
       {baseSectionFields.length > 0 && (
         <div className="card" key={baseSectionName}>
           {renderSectionTitle(baseSectionName)}
-          <div className="grid-2">
-            {baseSectionFields.map((f) => renderField(f))}
+          <div className="grid-2 wide-gap-grid">
+            {baseSectionFields
+              .filter((f) => ['project_name', 'customer_name', 'owner_user_id'].includes(f.fieldKey))
+              .map((f) => renderField(f))}
+            <div>
+              <label className="label">项目实施地点</label>
+              <input
+                type="text"
+                value={formData.project_location || ''}
+                onChange={(e) => update('project_location', e.target.value)}
+              />
+            </div>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label className="label">备注</label>
+              <textarea value={formData.remarks || ''} onChange={(e) => update('remarks', e.target.value)} />
+              {errors.remarks && <div className="error">{errors.remarks}</div>}
+            </div>
           </div>
         </div>
       )}
@@ -689,6 +711,24 @@ export function DynamicQuoteForm({
                 {errors.distribution_license_count && <div className="error">{errors.distribution_license_count}</div>}
               </div>
             </div>
+          </div>
+        )}
+      </div>
+
+      <div className="card">
+        {renderSectionTitle('实施管理')}
+        {renderSwitch('need_onsite_dev', '是否需要驻场')}
+        {isChecked('need_onsite_dev') && (
+          <div className="subsection-card" style={{ marginTop: 12 }}>
+            <h4 className="subsection-title">驻场情况</h4>
+            <select value={formData.onsite_mode || ''} onChange={(e) => update('onsite_mode', e.target.value)}>
+              <option value="">请选择</option>
+              <option value="全程所有人员驻场">全程所有人员驻场</option>
+              <option value="全程部分人员驻场">全程部分人员驻场</option>
+              <option value="半程所有人员驻场">半程所有人员驻场</option>
+              <option value="半程部分人员驻场">半程部分人员驻场</option>
+              <option value="少量驻场">少量驻场</option>
+            </select>
           </div>
         )}
       </div>

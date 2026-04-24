@@ -28,6 +28,7 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
       need_alerting: '否',
       need_other_feature: '否',
       need_shengong_suite: '否',
+      need_onsite_dev: '否',
       allow_distribution: '否',
       need_software_integration: '否',
       need_hardware_integration: '否',
