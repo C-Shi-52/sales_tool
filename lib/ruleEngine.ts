@@ -1,7 +1,7 @@
 import { FormFieldRule } from '@prisma/client';
 
-export function evalExpr(expression: string | null | undefined, formData: Record<string, any>) {
-  if (!expression) return true;
+export function evalExpr(expression: string | null | undefined, formData: Record<string, any>, defaultValue = true) {
+  if (!expression) return defaultValue;
   try {
     const fn = new Function('data', `with(data){ return (${expression}); }`);
     return !!fn(formData);
@@ -15,7 +15,7 @@ export function validateDynamicForm(rules: FormFieldRule[], formData: Record<str
 
   for (const rule of rules) {
     const visible = evalExpr(rule.visibleWhen, formData);
-    const required = visible && evalExpr(rule.requiredWhen, formData);
+    const required = visible && evalExpr(rule.requiredWhen, formData, false);
     const value = formData[rule.fieldKey];
 
     if (required && (value === undefined || value === null || value === '')) {
