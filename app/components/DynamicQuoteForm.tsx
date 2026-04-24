@@ -298,12 +298,13 @@ export function DynamicQuoteForm({
               .filter((f) => ['project_name', 'customer_name', 'owner_user_id'].includes(f.fieldKey))
               .map((f) => renderField(f))}
             <div>
-              <label className="label">项目实施地点</label>
+              <label className="label">项目实施地点 *</label>
               <input
                 type="text"
                 value={formData.project_location || ''}
                 onChange={(e) => update('project_location', e.target.value)}
               />
+              {errors.project_location && <div className="error">{errors.project_location}</div>}
             </div>
             <div style={{ gridColumn: '1 / -1' }}>
               <label className="label">备注</label>

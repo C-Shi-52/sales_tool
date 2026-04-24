@@ -39,6 +39,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     const errors = validateDynamicForm(rules as any, formData);
     append3dValidationErrors(formData, errors);
+    if (!formData.project_location || String(formData.project_location).trim().length === 0) {
+      errors.project_location = '项目实施地点必填';
+    }
 
     if (Object.keys(errors).length > 0 && body.strictValidation) {
       return NextResponse.json({ message: 'Validation failed', errors }, { status: 400 });
