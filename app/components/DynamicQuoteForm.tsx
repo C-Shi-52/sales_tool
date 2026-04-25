@@ -776,6 +776,7 @@ export function DynamicQuoteForm({
               <option value="半程部分人员驻场">半程部分人员驻场</option>
               <option value="少量驻场">少量驻场</option>
             </select>
+            {errors.onsite_mode && <div className="error">{errors.onsite_mode}</div>}
           </div>
         )}
       </div>

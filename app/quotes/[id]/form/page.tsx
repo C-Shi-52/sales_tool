@@ -20,7 +20,7 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
       fetch('/api/form-field-rules').then((x) => (x.ok ? x.json() : []))
     ]);
     const raw = q?.form?.formData || {};
-    const travel = raw.travel_expense ?? raw.business_expense ?? '';
+    const travel = raw.travel_expense ?? raw.business_expense ?? 0;
     setFormData({
       need_3d_scene: '否',
       need_data_integration: '否',
@@ -31,6 +31,7 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
       need_shengong_suite: '否',
       need_onsite_dev: '否',
       allow_distribution: '否',
+      distribution_license_count: 0,
       need_software_integration: '否',
       need_hardware_integration: '否',
       alert_rule_event: '否',
@@ -40,8 +41,8 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
       alert_delivery_external: '否',
       alert_delivery_phone_sms: '否',
       travel_expense: travel,
-      hospitality_expense: raw.hospitality_expense ?? '',
-      procurement_channel_cost: raw.procurement_channel_cost ?? '',
+      hospitality_expense: raw.hospitality_expense ?? 0,
+      procurement_channel_cost: raw.procurement_channel_cost ?? 0,
       ...raw
     });
     setRules(r || []);
