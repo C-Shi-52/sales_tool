@@ -120,7 +120,10 @@ export function DynamicQuoteForm({
     'payment_ratio_3',
     'payment_ratio_4',
     'payment_cycle_t',
-    'warranty_period_b'
+    'warranty_period_b',
+    'travel_expense',
+    'hospitality_expense',
+    'procurement_channel_cost'
   ]);
 
   const genericRules = rules.filter((r) => !custom3dKeys.has(r.fieldKey) && !customModuleKeys.has(r.fieldKey));
@@ -163,7 +166,8 @@ export function DynamicQuoteForm({
       其他功能: '🧩',
       产品授权: '🔐',
       实施管理: '🛠️',
-      回款: '💰'
+      回款: '💰',
+      商务支出: '💼'
     };
     return iconMap[section] || '📌';
   }
@@ -291,6 +295,14 @@ export function DynamicQuoteForm({
         {errors[fieldKey] && <div className="error">{errors[fieldKey]}</div>}
       </div>
     );
+  }
+
+  function setBusinessCostField(fieldKey: string, value: number | '') {
+    const next = { ...formData, [fieldKey]: value };
+    const total = ['travel_expense', 'hospitality_expense', 'procurement_channel_cost']
+      .reduce((sum, key) => sum + (Number(next[key]) || 0), 0);
+    next.business_expense = total;
+    setFormData(next);
   }
 
   const renderField = (field: FieldRule) => {
@@ -795,6 +807,39 @@ export function DynamicQuoteForm({
               onChange={(e) => update('warranty_period_b', e.target.value === '' ? '' : Math.max(0, Number(e.target.value)))}
             />
             {errors.warranty_period_b && <div className="error">{errors.warranty_period_b}</div>}
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        {renderSectionTitle('商务支出')}
+        <div className="grid-2 wide-gap-grid">
+          <div>
+            <label className="label">交通、食宿、差补等差旅支出预计（元）</label>
+            <input
+              type="number"
+              min={0}
+              value={formData.travel_expense ?? ''}
+              onChange={(e) => setBusinessCostField('travel_expense', e.target.value === '' ? '' : Math.max(0, Number(e.target.value)))}
+            />
+          </div>
+          <div>
+            <label className="label">商务招待预计（元）</label>
+            <input
+              type="number"
+              min={0}
+              value={formData.hospitality_expense ?? ''}
+              onChange={(e) => setBusinessCostField('hospitality_expense', e.target.value === '' ? '' : Math.max(0, Number(e.target.value)))}
+            />
+          </div>
+          <div>
+            <label className="label">招采/渠道等相关成本（元）</label>
+            <input
+              type="number"
+              min={0}
+              value={formData.procurement_channel_cost ?? ''}
+              onChange={(e) => setBusinessCostField('procurement_channel_cost', e.target.value === '' ? '' : Math.max(0, Number(e.target.value)))}
+            />
           </div>
         </div>
       </div>

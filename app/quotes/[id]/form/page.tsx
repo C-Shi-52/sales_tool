@@ -20,6 +20,7 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
       fetch('/api/form-field-rules').then((x) => (x.ok ? x.json() : []))
     ]);
     const raw = q?.form?.formData || {};
+    const travel = raw.travel_expense ?? raw.business_expense ?? '';
     setFormData({
       need_3d_scene: '否',
       need_data_integration: '否',
@@ -38,6 +39,9 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
       alert_delivery_internal: '否',
       alert_delivery_external: '否',
       alert_delivery_phone_sms: '否',
+      travel_expense: travel,
+      hospitality_expense: raw.hospitality_expense ?? '',
+      procurement_channel_cost: raw.procurement_channel_cost ?? '',
       ...raw
     });
     setRules(r || []);
@@ -97,6 +101,9 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
         </div>
       </div>
       <DynamicQuoteForm rules={rules} formData={formData} setFormData={setFormData} errors={errors} />
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+        <button onClick={goResultPage}>查看报价 →</button>
+      </div>
       <p className="small">
         {saveState === 'saving' && '正在自动保存...'}
         {saveState === 'saved' && '已自动保存'}
