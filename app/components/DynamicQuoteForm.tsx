@@ -114,7 +114,13 @@ export function DynamicQuoteForm({
     'need_onsite_dev',
     'business_expense',
     'other_amortization',
-    'onsite_mode'
+    'onsite_mode',
+    'payment_ratio_1',
+    'payment_ratio_2',
+    'payment_ratio_3',
+    'payment_ratio_4',
+    'payment_cycle_t',
+    'warranty_period_b'
   ]);
 
   const genericRules = rules.filter((r) => !custom3dKeys.has(r.fieldKey) && !customModuleKeys.has(r.fieldKey));
@@ -257,6 +263,34 @@ export function DynamicQuoteForm({
     else if (hasOther) next.alert_delivery_method = '邮件';
     else next.alert_delivery_method = '';
     setFormData(next);
+  }
+
+  function renderPercentInput(fieldKey: string, label: string) {
+    const ratio = Number(formData[fieldKey]);
+    const percentValue = Number.isFinite(ratio) ? Math.max(0, ratio * 100) : '';
+    return (
+      <div>
+        <label className="label">{label}</label>
+        <div className="percent-input-wrap">
+          <input
+            type="number"
+            min={0}
+            step={0.01}
+            value={percentValue}
+            onChange={(e) => {
+              if (e.target.value === '') {
+                update(fieldKey, '');
+                return;
+              }
+              const value = Math.max(0, Number(e.target.value));
+              update(fieldKey, value / 100);
+            }}
+          />
+          <span>%</span>
+        </div>
+        {errors[fieldKey] && <div className="error">{errors[fieldKey]}</div>}
+      </div>
+    );
   }
 
   const renderField = (field: FieldRule) => {
@@ -732,6 +766,37 @@ export function DynamicQuoteForm({
             </select>
           </div>
         )}
+      </div>
+
+      <div className="card">
+        {renderSectionTitle('回款')}
+        {errors.payment_ratios && <div className="error" style={{ marginBottom: 8 }}>{errors.payment_ratios}</div>}
+        <div className="grid-2 wide-gap-grid">
+          {renderPercentInput('payment_ratio_1', '第1笔款回款比例')}
+          {renderPercentInput('payment_ratio_2', '第2笔款回款比例')}
+          {renderPercentInput('payment_ratio_3', '第3笔款回款比例')}
+          {renderPercentInput('payment_ratio_4', '第4笔款回款比例')}
+          <div>
+            <label className="label">回款周期（天）</label>
+            <input
+              type="number"
+              min={0}
+              value={formData.payment_cycle_t ?? ''}
+              onChange={(e) => update('payment_cycle_t', e.target.value === '' ? '' : Math.max(0, Number(e.target.value)))}
+            />
+            {errors.payment_cycle_t && <div className="error">{errors.payment_cycle_t}</div>}
+          </div>
+          <div>
+            <label className="label">质保运维期（天）</label>
+            <input
+              type="number"
+              min={0}
+              value={formData.warranty_period_b ?? ''}
+              onChange={(e) => update('warranty_period_b', e.target.value === '' ? '' : Math.max(0, Number(e.target.value)))}
+            />
+            {errors.warranty_period_b && <div className="error">{errors.warranty_period_b}</div>}
+          </div>
+        </div>
       </div>
 
       {otherSections.map((section) => {

@@ -96,7 +96,6 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
           <button onClick={goResultPage}>查看报价 →</button>
         </div>
       </div>
-      {errors.payment_ratios && <p className="error">{errors.payment_ratios}</p>}
       <DynamicQuoteForm rules={rules} formData={formData} setFormData={setFormData} errors={errors} />
       <p className="small">
         {saveState === 'saving' && '正在自动保存...'}

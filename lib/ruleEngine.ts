@@ -36,7 +36,7 @@ export function validateDynamicForm(rules: FormFieldRule[], formData: Record<str
     (k) => Number(formData[k] ?? 0)
   );
   const sum = ratios.reduce((a, b) => a + b, 0);
-  if (Math.abs(sum - 1) > 0.0001) errors.payment_ratios = '四笔回款比例之和必须等于1';
+  if (Math.abs(sum - 1) > 0.0001) errors.payment_ratios = '四笔回款比例之和必须等于100%';
 
   return errors;
 }
