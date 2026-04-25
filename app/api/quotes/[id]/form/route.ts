@@ -131,6 +131,9 @@ function appendCustomValidationErrors(formData: Record<string, any>, errors: Rec
     const hasWay = ['alert_delivery_internal', 'alert_delivery_external', 'alert_delivery_phone_sms'].some((k) => formData[k] === '是');
     if (!hasRule) errors.need_alerting = '预警规则至少选择一项';
     if (!hasWay) errors.alert_delivery_method = '预警方式至少选择一项';
+    if (formData.alert_rule_trend === '是' && !(asNumber(formData.trend_algorithm_count) > 0)) {
+      errors.trend_algorithm_count = '仿真计算趋势预测算法个数必填且必须大于0';
+    }
   }
 
   // 产品授权
@@ -154,6 +157,11 @@ function appendCustomValidationErrors(formData: Record<string, any>, errors: Rec
   ['travel_expense', 'hospitality_expense', 'procurement_channel_cost'].forEach((k) => {
     if (!(asNumber(formData[k]) >= 0)) errors[k] = '该字段必填且必须大于等于0';
   });
+
+  // 其他功能
+  if (formData.need_other_feature === '是' && !(asNumber(formData.other_feature_man_days) > 0)) {
+    errors.other_feature_man_days = '研究院给出的人日成本估算必填且必须大于0';
+  }
 }
 
 function append3dValidationErrors(formData: Record<string, any>, errors: Record<string, string>) {

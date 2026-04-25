@@ -629,8 +629,9 @@ export function DynamicQuoteForm({
 
             <div className="subsection-card" style={{ marginTop: 12 }}>
               <h4 className="subsection-title">预警方式（可多选）</h4>
-              <div className="small">请选择客户需要的预警方式，所选内容将分别计入工作量。</div>
-              <div className="check-grid-two">
+            <div className="small">请选择客户需要的预警方式，所选内容将分别计入工作量。</div>
+            {errors.alert_delivery_method && <div className="error" style={{ marginTop: 6 }}>{errors.alert_delivery_method}</div>}
+            <div className="check-grid-two">
                 <label className="check-item">
                   <input
                     type="checkbox"
