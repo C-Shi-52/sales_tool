@@ -3,14 +3,14 @@
 import { useEffect, useMemo, useState } from 'react';
 
 const MODULES = [
-  { key: '三维场景', icon: '⌂' },
-  { key: '数据对接', icon: '⛓' },
-  { key: '视频监控', icon: '▭' },
-  { key: '二维看板', icon: '⌗' },
-  { key: '预警功能', icon: '◉' },
-  { key: '产品授权', icon: '◈' },
-  { key: '实施管理', icon: '⌁' },
-  { key: '其他', icon: '◎' }
+  { key: '三维场景', sectionIcon: '🧊' },
+  { key: '数据对接', sectionIcon: '🔗' },
+  { key: '视频监控', sectionIcon: '🎥' },
+  { key: '二维看板', sectionIcon: '📊' },
+  { key: '预警功能', sectionIcon: '🚨' },
+  { key: '产品授权', sectionIcon: '🔐' },
+  { key: '实施管理', sectionIcon: '🛠️' },
+  { key: '其他', sectionIcon: '🧩' }
 ] as const;
 
 export default function AdminRulePage() {
@@ -75,7 +75,6 @@ export default function AdminRulePage() {
                 document.getElementById(`module-${m.key}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }}
             >
-              <span className="rule-tab-icon">{m.icon}</span>
               {m.key}
             </button>
           ))}
@@ -84,7 +83,7 @@ export default function AdminRulePage() {
 
       {MODULES.map((m) => (
         <section id={`module-${m.key}`} key={m.key} className="card">
-          <h2 className="section-title"><span className="section-icon">{m.icon}</span>{m.key}</h2>
+          <h2 className="section-title"><span className="section-icon">{m.sectionIcon}</span>{m.key}</h2>
           <div className="small">该模块规则正在重构设计中，后续版本将补充详细规则配置项。</div>
         </section>
       ))}

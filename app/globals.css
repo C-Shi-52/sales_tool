@@ -79,6 +79,5 @@ button.ghost-danger { background: #fff; color: #dc2626; border: 1px solid #fecac
 .percent-input-wrap input { margin-top: 6px; max-width: 140px; }
 .rule-tabs-sticky { position: sticky; top: 0; z-index: 15; }
 .rule-tabs { display: grid; grid-template-columns: repeat(8, minmax(0,1fr)); gap: 6px; }
-.rule-tab { background: transparent; color: #334155; border: none; padding: 12px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.rule-tab { background: transparent; color: #334155; border: none; padding: 12px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 20px; font-weight: 600; }
 .rule-tab.active { background: #eaf1ff; color: #2563eb; border-radius: 8px; }
-.rule-tab-icon { font-size: 16px; color: #3b82f6; }
