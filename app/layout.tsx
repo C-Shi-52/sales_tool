@@ -17,7 +17,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div className="topnav">
             <div>
               <Link href="/quotes" style={{ color: '#fff', marginRight: 16 }}>报价列表</Link>
-              {user.role === 'ADMIN' && <Link href="/admin/rules" style={{ color: '#fff' }}>管理员规则</Link>}
+              {user.role === 'ADMIN' && <Link href="/admin/rules" style={{ color: '#fff' }}>报价规则</Link>}
             </div>
             <UserMenu username={user.username} role={user.role} />
           </div>

@@ -104,13 +104,13 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
       <div className="card form-header-card">
         <h2 style={{ margin: 0, textAlign: 'left' }}>需求填写</h2>
         <div className="form-header-actions">
-          <Link href="/quotes"><button className="secondary-outline">← 返回</button></Link>
-          <button onClick={goResultPage}>查看报价 →</button>
+          <Link href="/quotes"><button className="secondary-outline">&lt; 返回</button></Link>
+          <button onClick={goResultPage}>查看报价 &gt;</button>
         </div>
       </div>
       <DynamicQuoteForm rules={rules} formData={formData} setFormData={setFormData} errors={errors} />
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
-        <button onClick={goResultPage}>查看报价 →</button>
+        <button onClick={goResultPage}>查看报价 &gt;</button>
       </div>
       <p className="small">
         {saveState === 'saving' && '正在自动保存...'}
