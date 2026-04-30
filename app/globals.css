@@ -39,8 +39,24 @@ button.danger { background: #dc2626; }
 }
 .switch.on .switch-knob { transform: translateX(20px); }
 .switch-label { font-size: 13px; color: #374151; font-weight: 600; }
-.subsection-card { border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; padding: 14px; }
-.subsection-title { margin: 0 0 10px; color: #1e293b; }
+.subsection-card { border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; padding: 14px; }
+.subsection-title { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; color: #1e293b; }
+.rule-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+.rule-icon { display: inline-flex; align-items: center; justify-content: center; }
+.rule-tip-box { background: #f8fbff; border: 1px solid #dbeafe; border-radius: 8px; padding: 10px 12px; }
+.rule-tip-box p { margin: 4px 0; }
 .requirement-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
 .requirement-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .requirement-header h5 { margin: 0; font-size: 16px; }
@@ -84,5 +100,7 @@ button.ghost-danger { background: #fff; color: #dc2626; border: 1px solid #fecac
 .result-layout { display: grid; grid-template-columns: 6fr 4fr; gap: 14px; }
 .result-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
 .result-table th, .result-table td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; }
+.result-table thead th { text-align: center; }
+.subsection-card .result-table tbody td { background: #fafcff; }
 .result-emphasis { font-size: 28px; font-weight: 700; color: #2563eb; }
 .result-final-price { font-size: 52px; color: #dc2626; margin: 0 0 10px; }
