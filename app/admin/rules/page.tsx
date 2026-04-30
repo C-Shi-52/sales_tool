@@ -96,18 +96,22 @@ function NumberTable({
   subtitle,
   headers,
   rows,
-  valueKey
+  valueKey,
+  editable,
+  badge
 }: {
   title: string;
   subtitle: string;
   headers: string[];
   rows: Array<Record<string, any>>;
   valueKey: string;
+  editable: boolean;
+  badge: string;
 }) {
   const [data, setData] = useState(rows);
   return (
     <div className="subsection-card" style={{ marginTop: 12 }}>
-      <h4 className="subsection-title">{title}</h4>
+      <h4 className="subsection-title"><span className="rule-badge">{badge}</span>{title}</h4>
       <div className="small" style={{ marginBottom: 8 }}>{subtitle}</div>
       <table className="result-table">
         <thead><tr>{headers.map((h) => <th key={h}>{h}</th>)}</tr></thead>
@@ -119,6 +123,7 @@ function NumberTable({
                 <input
                   type="number"
                   value={row[valueKey]}
+                  disabled={!editable}
                   onChange={(e) => {
                     const next = [...data];
                     next[i] = { ...next[i], [valueKey]: Number(e.target.value) };
@@ -136,13 +141,20 @@ function NumberTable({
 }
 
 function ThreeDSceneRulePanel() {
+  const [editing, setEditing] = useState(false);
   return (
     <>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="small">配置三维场景建设相关的基础单价与系数规则</div>
+        <button className="secondary-outline" onClick={() => setEditing((v) => !v)}>{editing ? '完成' : '编辑'}</button>
+      </div>
       <NumberTable
-        title="1 模型基础价格"
+        title="模型基础价格"
         subtitle="用于配置不同模型类型的基础单价"
         headers={['模型类型', '计量单位', '基础单价（元）']}
         valueKey="price"
+        editable={editing}
+        badge="1"
         rows={[
           { label: '建筑类模型', unit: '万平', price: 3800 },
           { label: '普通设备', unit: '个', price: 2850 },
@@ -153,10 +165,12 @@ function ThreeDSceneRulePanel() {
         ]}
       />
       <NumberTable
-        title="2 模型基础条件系数"
+        title="模型基础条件系数"
         subtitle="根据客户提供的模型资料完整度设置系数"
         headers={['条件选项', '系数']}
         valueKey="factor"
+        editable={editing}
+        badge="2"
         rows={[
           { label: '有完整的较规范的模型，我们只需要做模型处理', factor: 0.25 },
           { label: '客户可以提供完整模型，但较为杂乱', factor: 0.4 },
@@ -165,10 +179,12 @@ function ThreeDSceneRulePanel() {
         ]}
       />
       <NumberTable
-        title="3 建模精细程度系数"
+        title="建模精细程度系数"
         subtitle="根据建模细节深度设置系数"
         headers={['条件选项', '系数']}
         valueKey="factor"
+        editable={editing}
+        badge="3"
         rows={[
           { label: '仅需要外观，不需要内部结构', factor: 1 },
           { label: '外观 + 粗略内部结构', factor: 1.7 },
@@ -176,10 +192,12 @@ function ThreeDSceneRulePanel() {
         ]}
       />
       <NumberTable
-        title="4 美术效果要求系数"
+        title="美术效果要求系数"
         subtitle="根据最终展示效果要求设置系数"
         headers={['条件选项', '系数']}
         valueKey="factor"
+        editable={editing}
+        badge="4"
         rows={[
           { label: '高要求（类似邯郸厂项目）', factor: 1.5 },
           { label: '中等要求（类似昆仑运营项目）', factor: 1.2 },
@@ -187,15 +205,27 @@ function ThreeDSceneRulePanel() {
         ]}
       />
       <NumberTable
-        title="5 模型量大且硬件受限系数"
+        title="模型量大且硬件受限系数"
         subtitle="当项目存在大量模型、硬件性能不足或特殊运行环境限制时，设置额外系数"
         headers={['选项', '系数']}
         valueKey="factor"
+        editable={editing}
+        badge="5"
         rows={[
           { label: '是', factor: 1.5 },
           { label: '否', factor: 1 }
         ]}
       />
+      <div className="subsection-card" style={{ marginTop: 12 }}>
+        <h4 className="subsection-title"><span className="rule-icon">📘</span>规则说明</h4>
+        <div className="rule-tip-box">
+          <p>三维场景建设价格 =</p>
+          <p>sum（基础价格 * 数量 * 模型基础条件系数 * 建模精细程度系数）</p>
+          <p>* 美术效果要求系数 * 硬件受限系数</p>
+          <p>+ 自采成本预估</p>
+        </div>
+        <p className="small" style={{ marginTop: 8 }}>各项系数均为相对值，1 表示基准，大于 1 表示增加成本，小于 1 表示降低成本。</p>
+      </div>
     </>
   );
 }
