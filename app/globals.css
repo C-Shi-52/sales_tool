@@ -57,6 +57,9 @@ button.danger { background: #dc2626; }
 .rule-icon { display: inline-flex; align-items: center; justify-content: center; }
 .rule-tip-box { background: #f8fbff; border: 1px solid #dbeafe; border-radius: 8px; padding: 10px 12px; }
 .rule-tip-box p { margin: 4px 0; }
+.rule-edit-btn { min-width: 84px; padding: 8px 18px; font-weight: 600; }
+.rule-edit-btn.edit { background: #2563eb; color: #fff; }
+.rule-edit-btn.done { background: #e5e7eb; color: #111827; }
 .requirement-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
 .requirement-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .requirement-header h5 { margin: 0; font-size: 16px; }

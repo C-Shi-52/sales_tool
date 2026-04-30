@@ -146,7 +146,7 @@ function ThreeDSceneRulePanel() {
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div className="small">配置三维场景建设相关的基础单价与系数规则</div>
-        <button className="secondary-outline" onClick={() => setEditing((v) => !v)}>{editing ? '完成' : '编辑'}</button>
+        <button className={editing ? 'rule-edit-btn done' : 'rule-edit-btn edit'} onClick={() => setEditing((v) => !v)}>{editing ? '完成' : '编辑'}</button>
       </div>
       <NumberTable
         title="模型基础价格"
@@ -219,10 +219,7 @@ function ThreeDSceneRulePanel() {
       <div className="subsection-card" style={{ marginTop: 12 }}>
         <h4 className="subsection-title"><span className="rule-icon">📘</span>规则说明</h4>
         <div className="rule-tip-box">
-          <p>三维场景建设价格 =</p>
-          <p>sum（基础价格 * 数量 * 模型基础条件系数 * 建模精细程度系数）</p>
-          <p>* 美术效果要求系数 * 硬件受限系数</p>
-          <p>+ 自采成本预估</p>
+          <p>三维场景建设价格 = sum（基础价格 * 数量 * 模型基础条件系数 * 建模精细程度系数）* 美术效果要求系数 * 硬件受限系数 + 自采成本预估</p>
         </div>
         <p className="small" style={{ marginTop: 8 }}>各项系数均为相对值，1 表示基准，大于 1 表示增加成本，小于 1 表示降低成本。</p>
       </div>
