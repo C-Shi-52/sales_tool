@@ -79,6 +79,15 @@ export default function QuoteFormPage({ params }: { params: { id: string } }) {
       alert('当前有未通过校验的字段，请先修正再查看报价');
       return;
     }
+    const calcRes = await fetch(`/api/quotes/${params.id}/calculate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    if (!calcRes.ok) {
+      alert('报价计算失败，请稍后重试');
+      return;
+    }
     window.location.href = `/quotes/${params.id}/result`;
   }
 
