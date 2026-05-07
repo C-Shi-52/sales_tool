@@ -29,7 +29,25 @@ async function main() {
     ['default_procurement_rate', '默认招采比例', 0.05],
     ['finance_annual_rate', '资金年化成本率', 0.05],
     ['workday_to_naturalday_factor', '工作日转自然日系数', 1.4],
-    ['default_day_rate', '默认人日单价', 2000]
+    ['default_day_rate', '默认人日单价', 2000],
+    ['scene_price_building', '三维场景-模型基础价格-建筑类模型', 3800],
+    ['scene_price_device_normal', '三维场景-模型基础价格-普通设备', 2850],
+    ['scene_price_device_complex', '三维场景-模型基础价格-大型复杂设备/普通机组', 11880],
+    ['scene_price_unit_large', '三维场景-模型基础价格-大型机组', 16650],
+    ['scene_price_line_normal', '三维场景-模型基础价格-普通装置/普通产线', 19000],
+    ['scene_price_line_complex', '三维场景-模型基础价格-大型复杂装置/大型复杂产线', 41350],
+    ['scene_cond_full_clean', '三维场景-模型基础条件系数-完整规范模型', 0.25],
+    ['scene_cond_full_messy', '三维场景-模型基础条件系数-完整但杂乱', 0.4],
+    ['scene_cond_partial', '三维场景-模型基础条件系数-部分提供', 0.7],
+    ['scene_cond_all_self', '三维场景-模型基础条件系数-全部自建', 1],
+    ['scene_precision_low', '三维场景-建模精细程度系数-低', 1],
+    ['scene_precision_mid', '三维场景-建模精细程度系数-中', 1.7],
+    ['scene_precision_high', '三维场景-建模精细程度系数-高', 2.3],
+    ['scene_visual_high', '三维场景-美术效果要求系数-高', 1.5],
+    ['scene_visual_mid', '三维场景-美术效果要求系数-中', 1.2],
+    ['scene_visual_low', '三维场景-美术效果要求系数-低', 1],
+    ['scene_hardware_yes', '三维场景-模型量大且硬件受限系数-是', 1.5],
+    ['scene_hardware_no', '三维场景-模型量大且硬件受限系数-否', 1]
   ];
 
   for (const [paramKey, paramName, paramValue] of systemParams) {

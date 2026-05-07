@@ -21,6 +21,15 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const paramsList = await prisma.systemParameter.findMany();
 
     const formData = parseJsonString<Record<string, any>>(form.formData, {});
+    const sceneRuleKeys = [
+      'scene_price_building','scene_price_device_normal','scene_price_device_complex','scene_price_unit_large','scene_price_line_normal','scene_price_line_complex',
+      'scene_cond_full_clean','scene_cond_full_messy','scene_cond_partial','scene_cond_all_self',
+      'scene_precision_low','scene_precision_mid','scene_precision_high',
+      'scene_visual_high','scene_visual_mid','scene_visual_low',
+      'scene_hardware_yes','scene_hardware_no'
+    ];
+    const paramMap = new Map(paramsList.map((p) => [p.paramKey, p.paramValue]));
+    for (const key of sceneRuleKeys) formData[`__rule_${key}`] = Number(paramMap.get(key) ?? 0);
     const oldResult = await prisma.quoteResult.findUnique({ where: { quoteId: quote.id } });
 
     const result = calculateQuote({

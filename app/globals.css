@@ -105,5 +105,6 @@ button.ghost-danger { background: #fff; color: #dc2626; border: 1px solid #fecac
 .result-table th, .result-table td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; }
 .result-table thead th { text-align: center; }
 .subsection-card .result-table tbody td { background: #fafcff; }
+.subsection-card .result-table tbody td { text-align: center; }
 .result-emphasis { font-size: 28px; font-weight: 700; color: #2563eb; }
 .result-final-price { font-size: 52px; color: #dc2626; margin: 0 0 10px; }

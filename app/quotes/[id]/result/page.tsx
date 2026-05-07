@@ -97,9 +97,18 @@ export default function QuoteResultPage({ params }: { params: { id: string } }) 
   }
 
   const calcAt = result?.calculatedAt ? new Date(result.calculatedAt) : new Date();
-  const moduleNames = ['产品授权', '三维场景', '数据对接', '视频监控', '二维看板', '预警功能', '其他功能', '实施管理', '商务支出'];
-  const moduleRows = moduleNames.map((name) => ({ name, amount: Number(result.moduleCosts?.[name] || 0) }));
-  const moduleTotal = moduleRows.reduce((s, x) => s + x.amount, 0);
+  const moduleRows = [
+    { name: '产品授权', amount: Number(result.moduleCosts?.license || 0) },
+    { name: '三维场景', amount: Number(result.moduleCosts?.scene_3d || 0) },
+    { name: '数据对接', amount: Number(result.moduleCosts?.data_integration || 0) },
+    { name: '视频监控', amount: Number(result.moduleCosts?.video_monitoring || 0) },
+    { name: '二维看板', amount: Number(result.moduleCosts?.dashboard || 0) },
+    { name: '预警功能', amount: Number(result.moduleCosts?.alerting || 0) },
+    { name: '其他功能', amount: Number(result.moduleCosts?.other_feature || 0) },
+    { name: '实施管理', amount: Number(result.implMgmtCost || 0) },
+    { name: '商务支出', amount: Number(result.businessExpense || 0) }
+  ];
+  const moduleTotal = moduleRows.reduce((s, x) => s + Number(x.amount || 0), 0);
   const directCost = moduleTotal + Number(result.implMgmtCost || 0) + Number(result.businessExpense || 0);
 
   return (
