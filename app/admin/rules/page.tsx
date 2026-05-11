@@ -119,7 +119,7 @@ function NumberTable({
         <tbody>
           {rows.map((row, i) => (
             <tr key={row.label}>
-              {Object.keys(row).filter((k) => k !== valueKey).map((k) => <td key={k}>{row[k]}</td>)}
+              {Object.keys(row).filter((k) => k !== valueKey && k !== 'key').map((k) => <td key={k}>{row[k]}</td>)}
               <td>
                 <input
                   type="number"
