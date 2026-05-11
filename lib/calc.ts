@@ -54,7 +54,6 @@ export function calculateQuote(input: {
   let sceneCost = 0;
   if (formData.need_3d_scene === '是') {
     const rows = Array.isArray(formData.model_requirements) ? formData.model_requirements : [];
-<<<<<<< codex/develop-internal-quoting-web-tool-c4jz5p
 
     const baseMap: Record<string, string> = {
       '建筑类模型': 'scene_price_building',
@@ -90,6 +89,8 @@ export function calculateQuote(input: {
       sceneCost += qty * basePrice * condFactor * precFactor;
     }
 
+<<<<<<< codex/develop-internal-quoting-web-tool-hh64dy
+=======
 =======
     const condMap: Record<string, string> = {
       基础: 'basic',
@@ -163,6 +164,7 @@ export function calculateQuote(input: {
       '中等要求（类似昆仑运营项目）': 'good',
       '高要求（类似邯郸电厂项目）': 'best'
     };
+>>>>>>> main
 >>>>>>> main
     const visualMap: Record<string, string> = {
       '高要求（类似邯郸厂项目）': 'scene_visual_high',

@@ -11,6 +11,14 @@ export default function QuoteResultPage({ params }: { params: { id: string } }) 
   const [procurementRate, setProcurementRate] = useState<number>(0.05);
 
   async function load() {
+<<<<<<< codex/develop-internal-quoting-web-tool-hh64dy
+    await fetch(`/api/quotes/${params.id}/calculate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ profitRate, taxRate, procurementRate })
+    }).catch(() => null);
+=======
+>>>>>>> main
     const [r, q] = await Promise.all([
       fetch(`/api/quotes/${params.id}/result`).then((x) => x.json()),
       fetch(`/api/quotes/${params.id}`).then((x) => x.json())
