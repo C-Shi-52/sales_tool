@@ -54,6 +54,43 @@ export function calculateQuote(input: {
   let sceneCost = 0;
   if (formData.need_3d_scene === '是') {
     const rows = Array.isArray(formData.model_requirements) ? formData.model_requirements : [];
+<<<<<<< codex/develop-internal-quoting-web-tool-c4jz5p
+
+    const baseMap: Record<string, string> = {
+      '建筑类模型': 'scene_price_building',
+      '普通设备': 'scene_price_device_normal',
+      '大型复杂设备/普通机组': 'scene_price_device_complex',
+      '大型复杂设备 / 普通机组': 'scene_price_device_complex',
+      '大型机组': 'scene_price_unit_large',
+      '普通装置/普通产线': 'scene_price_line_normal',
+      '普通装置 / 普通产线': 'scene_price_line_normal',
+      '大型复杂装置/大型复杂产线': 'scene_price_line_complex',
+      '大型复杂装置 / 大型复杂产线': 'scene_price_line_complex'
+    };
+    const condFactorMap: Record<string, string> = {
+      '有完整的较规范的模型，我们只需要做模型处理': 'scene_cond_full_clean',
+      '客户可以提供完整模型，但较为杂乱': 'scene_cond_full_messy',
+      '部分由客户提供，我们仍需要进行部分建模': 'scene_cond_partial',
+      '全部由我们自行建模': 'scene_cond_all_self'
+    };
+    const precisionFactorMap: Record<string, string> = {
+      '仅需要外观，不需要内部结构': 'scene_precision_low',
+      '外观+粗略内部结构': 'scene_precision_mid',
+      '外观 + 粗略内部结构': 'scene_precision_mid',
+      '外观+精细内部结构，或者对建模精度有要求': 'scene_precision_high',
+      '外观 + 精细内部结构，或者对建模精度有要求': 'scene_precision_high'
+    };
+    for (const row of rows) {
+      const qty = Number(row.quantity || 0);
+      const baseKey = baseMap[row.model_type];
+      const basePrice = getDirect(directRules, baseKey, sceneRule(formData, baseKey, 0));
+      const isBuilding = row.model_type === '建筑类模型';
+      const condFactor = isBuilding ? 1 : getDirect(directRules, condFactorMap[row.model_condition], sceneRule(formData, condFactorMap[row.model_condition], 1));
+      const precFactor = isBuilding ? 1 : getDirect(directRules, precisionFactorMap[row.precision], sceneRule(formData, precisionFactorMap[row.precision], 1));
+      sceneCost += qty * basePrice * condFactor * precFactor;
+    }
+
+=======
     const condMap: Record<string, string> = {
       基础: 'basic',
       中等: 'medium',
@@ -126,6 +163,7 @@ export function calculateQuote(input: {
       '中等要求（类似昆仑运营项目）': 'good',
       '高要求（类似邯郸电厂项目）': 'best'
     };
+>>>>>>> main
     const visualMap: Record<string, string> = {
       '高要求（类似邯郸厂项目）': 'scene_visual_high',
       '中等要求（类似昆仑运营项目）': 'scene_visual_mid',
